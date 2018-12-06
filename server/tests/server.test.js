@@ -159,7 +159,7 @@ describe('PATCH /todos/:id', (done) => {
       .end(done)
   })
   it('should clear completed at when todo is not completed', (done) => {
-    let id = todos[0]._id.toHexString()
+    let id = todos[1]._id.toHexString()
     let text = 'changing completed'
     request(app)
       .patch(`/todos/${id}`)
