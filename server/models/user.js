@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const { mongoose } = require('../db/mongoose')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
@@ -34,13 +34,11 @@ let userSchema = new mongoose.Schema({
 
 // below is how you define instance methods or override them
 
-userSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function () {
   let user = this
   let userObject = user.toObject()
   return _.pick(userObject, ['_id', 'email']) 
 }
-
-
 userSchema.methods.generateAuthToken = function () {
   let user = this
   let access = 'auth'
@@ -51,6 +49,27 @@ userSchema.methods.generateAuthToken = function () {
   })
 }
 
+// below is how you define model methods
+
+userSchema.statics.findByToken = function (token) {
+  let User = this
+  let decoded = null;
+  try {
+    decoded = jwt.verify(token, 'abc123')
+  } catch (e) {
+    /*
+    return new Promise((resolve, reject) => {
+      reject()
+    })
+    */
+    return Promise.reject() // equivalent to the above code
+  }
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  })
+}
 let User = mongoose.model('user', userSchema)
 
 module.exports = { User, userSchema }

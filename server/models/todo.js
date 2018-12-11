@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const { mongoose } = require('../db/mongoose')
 
 let Todo = mongoose.model('todo', {
   text: {
