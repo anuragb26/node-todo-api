@@ -10,7 +10,6 @@ const authenticate = (req, res, next) => {
     req.token = token
     next()
   }).catch(() => { 
-    console.log('in outer promise')
     res.status(401).send()
   })
 }
