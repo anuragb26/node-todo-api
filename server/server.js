@@ -92,6 +92,17 @@ app.get('/users/me', authenticate, (req, res) => {
   return res.send(req.user)
 })
 
+app.post('/user/login', (req, res) => {
+  let body = _.pick(req.body, ['email', 'password'])
+  User.findByCredentials(body.email, body.password).then(user => {
+    return user.generateAuthToken().then(token => {
+      return res.header('x-auth', token).send({ user })
+    })
+  }).catch(err => {
+    return res.status(400).send(err)
+  })
+})
+
 app.listen(port, () => {
   console.log(`Started on port ${port}`)
 })

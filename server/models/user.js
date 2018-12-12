@@ -72,6 +72,25 @@ userSchema.statics.findByToken = function (token) {
   })
 }
 
+userSchema.statics.findByCredentials = function (email, password) {
+  let User = this
+  return User.findOne({ email }).then(user => {
+    if (!user) {
+      return Promise.reject('invalid credentials')
+    }
+    // wrap a callback inside a promise
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (res) {
+          resolve(user)
+        } else {
+          reject()
+        }
+      })
+
+    })
+  })
+}
 //Mongooe middleware
 
 userSchema.pre('save', function (next) {
